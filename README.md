@@ -1,6 +1,6 @@
 # DeveloperHub Flutter Application
 
-Welcome to the **DeveloperHub Flutter Application**. This project is a state-of-the-art, premium cross-platform application developed as part of **Assignment 1 & 2 (Weeks 1 to 3) & Final Project**. It showcases an elegant UI, robust form validation, smooth navigation, dynamic state management, local database persistence, and an animated launch splash screen.
+Welcome to the **DeveloperHub Flutter Application**. This project is a state-of-the-art, premium cross-platform application developed as part of **Weeks 1 to 3**. It showcases an elegant UI, robust form validation, smooth navigation, dynamic state management, local database persistence, and an animated launch splash screen.
 
 ---
 
