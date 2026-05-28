@@ -30,12 +30,15 @@ class HomeScreen extends StatelessWidget {
           children: [
             Icon(Icons.dashboard_rounded, color: Color(0xFF818CF8)),
             SizedBox(width: 10),
-            Text(
-              'DeveloperHub Dashboard',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+            Expanded(
+              child: Text(
+                'DeveloperHub Dashboard',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
