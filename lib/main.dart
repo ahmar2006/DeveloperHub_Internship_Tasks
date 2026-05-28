@@ -13,22 +13,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'DeveloperHub Login App',
       debugShowCheckedModeBanner: false,
-      
-      // Premium Slate / Dark Mode Theme
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0F172A), // Slate 900
-        
-        // Deep Indigo/Slate Color Scheme
+        scaffoldBackgroundColor: const Color(0xFF0F172A),
         colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF6366F1), // Indigo 500
-          secondary: Color(0xFF818CF8), // Indigo 400
-          surface: Color(0xFF1E293B), // Slate 800
-          error: Color(0xFFEF4444), // Red 500
+          primary: Color(0xFF6366F1),
+          secondary: Color(0xFF818CF8),
+          surface: Color(0xFF1E293B),
+          error: Color(0xFFEF4444),
         ),
-        
-        // Custom Typography
         fontFamily: 'Inter',
         textTheme: const TextTheme(
           headlineMedium: TextStyle(
@@ -40,17 +34,14 @@ class MyApp extends StatelessWidget {
           bodyMedium: TextStyle(
             fontSize: 14,
             height: 1.5,
-            color: Color(0xFF94A3B8), // Slate 400
+            color: Color(0xFF94A3B8),
           ),
         ),
-        
-        // SnackBar Theme
         snackBarTheme: const SnackBarThemeData(
           backgroundColor: Color(0xFF1E293B),
           contentTextStyle: TextStyle(color: Colors.white),
         ),
       ),
-      
       home: const LoginScreen(),
     );
   }

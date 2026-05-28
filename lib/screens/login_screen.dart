@@ -29,14 +29,12 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
 
-      // Simulate a elegant login delay
       Future.delayed(const Duration(milliseconds: 1200), () {
         if (mounted) {
           setState(() {
             _isLoading = false;
           });
           
-          // Navigate to Home Screen using Navigator.push()
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -57,31 +55,29 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Dynamic Gradient Background
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF0F172A), // Slate 900
-                  Color(0xFF1E1B4B), // Indigo 950
-                  Color(0xFF311042), // Purple 950
+                  Color(0xFF0F172A),
+                  Color(0xFF1E1B4B),
+                  Color(0xFF311042),
                 ],
               ),
             ),
           ),
           
-          // Subtle Ambient Light Dots
           Positioned(
             top: -100,
             right: -100,
             child: Container(
               width: 350,
               height: 350,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF6366F1).withAlpha(38), // Indigo 500 with 15% opacity (38/255)
+                color: Color(0xFF6366F1),
               ),
             ),
           ),
@@ -91,14 +87,13 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Container(
               width: 300,
               height: 300,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFEC4899).withAlpha(25), // Pink 500 with 10% opacity (25/255)
+                color: Color(0xFFEC4899),
               ),
             ),
           ),
 
-          // Central Card View
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -107,15 +102,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: isDesktop ? 450 : size.width,
                 padding: const EdgeInsets.all(32.0),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B).withAlpha(165), // Slate 800 with 65% opacity
+                  color: const Color(0xFF1E293B),
                   borderRadius: BorderRadius.circular(24.0),
                   border: Border.all(
-                    color: const Color(0xFF475569).withAlpha(127), // Slate 600 with 50% opacity
+                    color: const Color(0xFF475569),
                     width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha(76), // 30% opacity
+                      color: Colors.black.withAlpha(76),
                       blurRadius: 30,
                       offset: const Offset(0, 15),
                     ),
@@ -127,19 +122,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Header Section (Column & Container)
                       Center(
                         child: Column(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF6366F1).withAlpha(38),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF6366F1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
                                 Icons.lock_outline_rounded,
-                                color: Color(0xFF818CF8), // Indigo 400
+                                color: Color(0xFF818CF8),
                                 size: 40,
                               ),
                             ),
@@ -156,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Text(
                               'Please enter your credentials to login',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: const Color(0xFF94A3B8), // Slate 400
+                                color: const Color(0xFF94A3B8),
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -165,11 +159,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 32),
 
-                      // Email Field Title & Label
                       const Text(
                         'Email Address',
                         style: TextStyle(
-                          color: Color(0xFFCBD5E1), // Slate 300
+                          color: Color(0xFFCBD5E1),
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),
@@ -185,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           hintText: 'name@example.com',
                           hintStyle: const TextStyle(color: Color(0xFF64748B)),
                           filled: true,
-                          fillColor: const Color(0xFF0F172A).withAlpha(127),
+                          fillColor: const Color(0xFF0F172A),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.0),
                             borderSide: const BorderSide(color: Color(0xFF475569)),
@@ -211,7 +204,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (value == null || value.trim().isEmpty) {
                             return 'Email address is required';
                           }
-                          // Standard email format validation regex
                           final emailRegex = RegExp(
                             r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
                           );
@@ -223,7 +215,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Password Field Title & Label
                       const Text(
                         'Password',
                         style: TextStyle(
@@ -257,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           hintText: 'Enter your password',
                           hintStyle: const TextStyle(color: Color(0xFF64748B)),
                           filled: true,
-                          fillColor: const Color(0xFF0F172A).withAlpha(127),
+                          fillColor: const Color(0xFF0F172A),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.0),
                             borderSide: const BorderSide(color: Color(0xFF475569)),
@@ -291,7 +282,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 12),
 
-                      // Forgot Password Link (Row & Text)
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
@@ -327,7 +317,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 32),
 
-                      // Login Button (Modern FlatButton Equivalent with stunning gradient/flat look)
                       SizedBox(
                         width: double.infinity,
                         height: 52,
@@ -335,14 +324,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               colors: [
-                                Color(0xFF6366F1), // Indigo 500
-                                Color(0xFF4F46E5), // Indigo 600
+                                Color(0xFF6366F1),
+                                Color(0xFF4F46E5),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(12.0),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF6366F1).withAlpha(76),
+                                color: const Color(0xFF6366F1),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
@@ -353,8 +342,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
+                                  borderRadius: BorderRadius.circular(12.0)),
                               backgroundColor: Colors.transparent,
                               padding: const EdgeInsets.symmetric(vertical: 12.0),
                             ),
