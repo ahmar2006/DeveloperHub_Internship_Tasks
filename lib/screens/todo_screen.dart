@@ -1,5 +1,26 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class Task {
+  final String title;
+  bool isCompleted;
+
+  Task({
+    required this.title,
+    this.isCompleted = false,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'isCompleted': isCompleted,
+      };
+
+  factory Task.fromJson(Map<String, dynamic> json) => Task(
+        title: json['title'] as String,
+        isCompleted: json['isCompleted'] as bool? ?? false,
+      );
+}
 
 class TodoScreen extends StatefulWidget {
   const TodoScreen({super.key});
@@ -9,7 +30,7 @@ class TodoScreen extends StatefulWidget {
 }
 
 class _TodoScreenState extends State<TodoScreen> {
-  final List<String> _tasks = [];
+  final List<Task> _tasks = [];
   final _taskController = TextEditingController();
 
   @override
@@ -26,22 +47,28 @@ class _TodoScreenState extends State<TodoScreen> {
 
   Future<void> _loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _tasks.addAll(prefs.getStringList('todo_tasks') ?? []);
-    });
+    final saved = prefs.getStringList('todo_tasks_json');
+    if (saved != null) {
+      setState(() {
+        _tasks.clear();
+        _tasks.addAll(
+          saved.map((item) => Task.fromJson(json.decode(item))).toList(),
+        );
+      });
+    }
   }
 
   Future<void> _saveTasks() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('todo_tasks', _tasks);
+    final data = _tasks.map((item) => json.encode(item.toJson())).toList();
+    await prefs.setStringList('todo_tasks_json', data);
   }
 
-  void _addTask() {
-    final text = _taskController.text.trim();
+  void _addTask(String title) {
+    final text = title.trim();
     if (text.isNotEmpty) {
       setState(() {
-        _tasks.add(text);
-        _taskController.clear();
+        _tasks.add(Task(title: text));
       });
       _saveTasks();
     }
@@ -54,10 +81,123 @@ class _TodoScreenState extends State<TodoScreen> {
     _saveTasks();
   }
 
+  void _toggleTask(int index) {
+    setState(() {
+      _tasks[index].isCompleted = !_tasks[index].isCompleted;
+    });
+    _saveTasks();
+  }
+
+  void _showAddTaskSheet(BuildContext context) {
+    _taskController.clear();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E293B),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24.0,
+            right: 24.0,
+            top: 24.0,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 24.0,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Add New Task',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded, color: Color(0xFF94A3B8)),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _taskController,
+                autofocus: true,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'What needs to be done?',
+                  hintStyle: const TextStyle(color: Color(0xFF64748B)),
+                  filled: true,
+                  fillColor: const Color(0xFF0F172A),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: const BorderSide(color: Color(0xFF475569)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: const BorderSide(color: Color(0xFF334155)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: const BorderSide(color: Color(0xFF6366F1), width: 1.5),
+                  ),
+                ),
+                onFieldSubmitted: (value) {
+                  if (value.trim().isNotEmpty) {
+                    _addTask(value);
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_taskController.text.trim().isNotEmpty) {
+                      _addTask(_taskController.text);
+                      Navigator.pop(context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6366F1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Create Task',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isDesktop = size.width > 600;
+
+    final completedCount = _tasks.where((t) => t.isCompleted).length;
+    final remainingCount = _tasks.length - completedCount;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0F172A),
@@ -69,13 +209,21 @@ class _TodoScreenState extends State<TodoScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'To-Do Task Board',
+          'Task Board',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add_circle_outline_rounded, color: Color(0xFF818CF8), size: 28),
+            tooltip: 'Add Task',
+            onPressed: () => _showAddTaskSheet(context),
+          ),
+          const SizedBox(width: 12),
+        ],
       ),
       body: Center(
         child: Container(
@@ -100,66 +248,6 @@ class _TodoScreenState extends State<TodoScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Create New Task',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _taskController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: 'What needs to be done?',
-                        hintStyle: const TextStyle(color: Color(0xFF64748B)),
-                        filled: true,
-                        fillColor: const Color(0xFF0F172A),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(color: Color(0xFF475569)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(color: Color(0xFF334155)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(color: Color(0xFF6366F1), width: 1.5),
-                        ),
-                      ),
-                      onFieldSubmitted: (_) => _addTask(),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    height: 48,
-                    width: 48,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF6366F1),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF6366F1).withAlpha(51),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.add_rounded, color: Colors.white),
-                      onPressed: _addTask,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -171,24 +259,44 @@ class _TodoScreenState extends State<TodoScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF6366F1).withAlpha(38),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '${_tasks.length} remaining',
-                      style: const TextStyle(
-                        color: Color(0xFF818CF8),
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF34D399).withAlpha(38),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '$completedCount done',
+                          style: const TextStyle(
+                            color: Color(0xFF34D399),
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF6366F1).withAlpha(38),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '$remainingCount active',
+                          style: const TextStyle(
+                            color: Color(0xFF818CF8),
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Expanded(
                 child: _tasks.isEmpty
                     ? Center(
@@ -224,36 +332,59 @@ class _TodoScreenState extends State<TodoScreen> {
                         itemCount: _tasks.length,
                         physics: const BouncingScrollPhysics(),
                         itemBuilder: (context, index) {
+                          final task = _tasks[index];
                           return Container(
                             margin: const EdgeInsets.only(bottom: 12.0),
                             decoration: BoxDecoration(
                               color: const Color(0xFF0F172A),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: const Color(0xFF334155),
+                                color: task.isCompleted
+                                    ? const Color(0xFF334155).withAlpha(127)
+                                    : const Color(0xFF334155),
                                 width: 1.0,
                               ),
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                              leading: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF6366F1).withAlpha(25),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.radio_button_unchecked_rounded,
-                                  color: Color(0xFF818CF8),
-                                  size: 18,
+                              leading: GestureDetector(
+                                onTap: () => _toggleTask(index),
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: task.isCompleted
+                                        ? const Color(0xFF34D399).withAlpha(25)
+                                        : Colors.transparent,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: task.isCompleted
+                                          ? const Color(0xFF34D399)
+                                          : const Color(0xFF64748B),
+                                      width: 2.0,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    task.isCompleted
+                                        ? Icons.check_rounded
+                                        : Icons.circle_outlined,
+                                    color: task.isCompleted
+                                        ? const Color(0xFF34D399)
+                                        : Colors.transparent,
+                                    size: 16,
+                                  ),
                                 ),
                               ),
                               title: Text(
-                                _tasks[index],
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                task.title,
+                                style: TextStyle(
+                                  color: task.isCompleted
+                                      ? const Color(0xFF64748B)
+                                      : Colors.white,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
+                                  decoration: task.isCompleted
+                                      ? TextDecoration.lineThrough
+                                      : TextDecoration.none,
                                 ),
                               ),
                               trailing: IconButton(

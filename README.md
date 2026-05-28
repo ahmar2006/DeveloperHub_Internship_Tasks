@@ -1,41 +1,39 @@
 # DeveloperHub Flutter Application
 
-Welcome to the **DeveloperHub Flutter Application**. This project is a state-of-the-art, premium cross-platform application developed as part of **Assignment 1 & 2 (Weeks 1 to 3)**. It showcases an elegant UI, robust form validation, smooth navigation, dynamic state management, and persistent local storage.
+Welcome to the **DeveloperHub Flutter Application**. This project is a state-of-the-art, premium cross-platform application developed as part of **Assignment 1 & 2 (Weeks 1 to 5) & Final Project**. It showcases an elegant UI, robust form validation, smooth navigation, dynamic state management, local database persistence, and an animated launch splash screen.
 
 ---
 
 ## Features
 
-### 1. Modern UI
+### 1. Animated Splash Screen (Bonus Challenge)
+- **Visuals**: Ambient dark gradient, pulsing neon energy bolt icon with outer shadow glow effects, and a modern smooth linear loading bar.
+- **Auto-Navigation**: Displays for 2.2 seconds to establish premium brand identity, then automatically transitions to the validated Login Screen via root-replacing route transitions.
+
+### 2. Form Validation Login Screen
 - **Theme**: Premium slate dark mode styling with harmonized colors (deep slate, rich indigo, and violet gradients).
 - **Responsive Layout**: Designed to look stunning on both desktop/web screens and mobile devices.
-- **Micro-Animations**: Features custom visual feedback for text inputs, loading spinner states, and sleek interactive buttons.
-
-### 2. Form Validation
-- **Email Validation**: 
-  - Checks if the field is empty.
-  - Validates correct email format using standard regular expressions.
-- **Password Validation**:
-  - Checks if the field is empty.
-  - Ensures password security with a minimum character length of 6 characters.
+- **Validation**: 
+  - Regex-based email checking.
+  - Minimum 6-character length validation for passwords.
 - **Interactive Feedback**: Dynamic input validation states with error borders and real-time instructions.
 
-### 3. Smooth Navigation
-- Uses the standard **Flutter Navigation System** to navigate seamlessly between screens.
-- **Login Screen to Dashboard**: Passes authenticated email dynamically to customize the dashboard greeting.
-- **Dashboard to Login Screen**: Clean logout flow popping the route off the stack safely.
-- **Dashboard to Interactive Modules**: Push and pop navigation to the sub-applications.
+### 3. Integrated Performance Dashboard
+- **Welcome Banner**: Custom banner extracting and capitalizing the user's name dynamically from their email.
+- **Metrics Overview**: Metric widgets for Assignments Completed, Active Learning Hours, and Skill Score.
+- **Interactive Suite**: High-fidelity modular card triggers to navigate to sub-modules.
 
-### 4. Interactive Counter Module (Week 4 State Management & Persistence)
+### 4. Interactive Counter Module
 - **Dynamic State**: Manages integer counter value utilizing standard reactive `setState`.
 - **Local Storage**: Automatically persists and restores the count value on app restart using `SharedPreferences`.
 - **UI**: Circular action buttons for incrementing and decrementing the count with custom outline borders.
 
-### 5. Persistent To-Do Task Board (Week 5 Simple List App)
-- **Add Tasks**: Seamless form input to add new tasks.
-- **Dynamic List**: Lists all active tasks using a dynamic, scrollable `ListView`.
-- **Delete Tasks**: Allows removing individual tasks, immediately updating the active list layout.
-- **Local Storage**: String list serialization saving and loading task descriptions persistently via `SharedPreferences`.
+### 5. Advanced Task Board (Final Project Task Management App)
+- **Custom AppBar Actions**: Custom action trigger button in the AppBar showing an elegant modal bottom sheet sheet to input and add new tasks.
+- **Task Completion Status**: Clickable circular status icons next to tasks to toggle their completion status. Completed tasks instantly transition with text strike-through decorations and dim grey font colors.
+- **Interactive Stats**: Dynamic counters rendering Completed Tasks vs Remaining Active Tasks.
+- **SharedPreferences Serialization**: Advanced JSON string list encoding/decoding (`dart:convert`) to serialize and preserve task titles and completion flags across app restarts.
+- **Delete Actions**: Standard trash icons to cleanly purge tasks instantly.
 
 ---
 
@@ -49,10 +47,11 @@ Welcome to the **DeveloperHub Flutter Application**. This project is a state-of-
   lib/
   ├── main.dart             # Application Entry Point & Theme Settings
   └── screens/
+      ├── splash_screen.dart # Pulsing Splash Screen Launch Point
       ├── login_screen.dart # Login Form UI and Validation Logic
       ├── home_screen.dart  # Home Dashboard with Interactive Module Cards
       ├── counter_screen.dart # Persistent State Counter
-      └── todo_screen.dart  # Persistent To-Do Task List
+      └── todo_screen.dart  # Upgraded Task Management Board
   ```
 
 ---
@@ -91,14 +90,3 @@ flutter doctor
    ```bash
    flutter run -d windows
    ```
-
----
-
-## Interactive Showcase & Validation
-
-Here is a visual breakdown of the application flow:
-
-1. **Login Validation**: Empty input and incorrect formats trigger errors instantly.
-2. **Dashboard Overview**: Redirects to the home screen where users can see metrics cards and choose interactive modules.
-3. **State Counter**: Increment and decrement buttons change the counter value, persisting value across navigations and restarts.
-4. **To-Do Task Board**: Allows list addition and deletion with immediate SharedPreferences state sync.
