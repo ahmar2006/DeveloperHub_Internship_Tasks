@@ -82,9 +82,6 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xFF6366F1).withAlpha(38), // Indigo 500 with 15% opacity (38/255)
-                filters: const [
-                  // We can use BoxShadow or backdrop filter later
-                ],
               ),
             ),
           ),
